@@ -80,11 +80,11 @@ namespace ExchangeRatesService
                 {
                     // SQLiteConnection.CreateFile(Application.StartupPath + "\\pak.db");
 
-                    SQLiteCommand cmd = new SQLiteCommand("CREATE TABLE DolarRates(Name TEXT, CurrencyName TEXT, ForexBuying REAL, ForexSelling REAL, BanknoteBuying REAL,BanknoteSelling REAL)", baglan);
-                    SQLiteCommand cmd2 = new SQLiteCommand("CREATE TABLE EuroRates(Name TEXT, CurrencyName TEXT, ForexBuying REAL, ForexSelling REAL, BanknoteBuying REAL,BanknoteSelling REAL)", baglan);
+                    SQLiteCommand komut1 = new SQLiteCommand("CREATE TABLE DolarRates(Name TEXT, CurrencyName TEXT, ForexBuying REAL, ForexSelling REAL, BanknoteBuying REAL,BanknoteSelling REAL)", baglan);
+                    SQLiteCommand komut2 = new SQLiteCommand("CREATE TABLE EuroRates(Name TEXT, CurrencyName TEXT, ForexBuying REAL, ForexSelling REAL, BanknoteBuying REAL,BanknoteSelling REAL)", baglan);
                     baglan.Open();
-                    cmd.ExecuteNonQuery();
-                    cmd2.ExecuteNonQuery();
+                    komut1.ExecuteNonQuery();
+                    komut2.ExecuteNonQuery();
                     string tbl = "insert into DolarRates(Name,CurrencyName,ForexBuying,ForexSelling,BanknoteBuying,BanknoteSelling) values ('" + "a" + "', +'" + "b" + "',+'" + 0 + "',+'" + 0 + "',+'" + 0 + "',+'" + 0 + "')";
                     string tbl2 = "insert into EuroRates(Name,CurrencyName,ForexBuying,ForexSelling,BanknoteBuying,BanknoteSelling) values ('" + "a" + "', +'" + "b" + "',+'" + 0 + "',+'" + 0 + "',+'" + 0 + "',+'" + 0 + "')";
                     SQLiteCommand komut3 = new SQLiteCommand(tbl, baglan);
