@@ -20,19 +20,21 @@ namespace ExchangeRatesService
             InitializeComponent();
         }
 
-        //Program kontrol için
+        // Program kontrol için
         public void OnDebug()
         {
             OnStart(null);
         }
-        Timer tmr=new Timer();
+
+        Timer tmr = new Timer();
         protected override void OnStart(string[] args)
         {
-
-            tmr.Elapsed += new ElapsedEventHandler(tmr_Elapsed);
-            tmr.Interval = 1000*60*10;//10 sec
-            tmr.Start();
+            // System.Diagnostics.Debugger.Launch();
             UpdateReader();
+            tmr.Elapsed += new ElapsedEventHandler(tmr_Elapsed);
+            tmr.Interval = 1000 * 60 * 1;//10 sec**
+            tmr.Start();
+
 
         }
 
@@ -64,12 +66,47 @@ namespace ExchangeRatesService
             tmr.Enabled = false;
         }
 
-        SQLiteConnection baglan = new SQLiteConnection(@"Data Source=C:\Users\pakiz\source\repos\ExchangeRatesService\ExchangeRatesService\db\ExchangeRates.db");
+
+
         async Task UpdateReader()
         {
+            //SQLiteConnection baglan = new SQLiteConnection(@"Data Source=.\ExchangeRates.db;Version=3;Read Only=False");
 
+            string program_yolu = AppDomain.CurrentDomain.BaseDirectory;
+            SQLiteConnection baglan = new SQLiteConnection(@"Data Source=" + program_yolu + "/ExchangeRates.db;Version=3;Read Only=False;");
             try
             {
+                if (System.IO.File.Exists(program_yolu + "\\ExchangeRates.db") == false)
+                {
+                    // SQLiteConnection.CreateFile(Application.StartupPath + "\\pak.db");
+
+                    SQLiteCommand cmd = new SQLiteCommand("CREATE TABLE DolarRates(Name TEXT, CurrencyName TEXT, ForexBuying REAL, ForexSelling REAL, BanknoteBuying REAL,BanknoteSelling REAL)", baglan);
+                    SQLiteCommand cmd2 = new SQLiteCommand("CREATE TABLE EuroRates(Name TEXT, CurrencyName TEXT, ForexBuying REAL, ForexSelling REAL, BanknoteBuying REAL,BanknoteSelling REAL)", baglan);
+                    baglan.Open();
+                    cmd.ExecuteNonQuery();
+                    cmd2.ExecuteNonQuery();
+                    string tbl = "insert into DolarRates(Name,CurrencyName,ForexBuying,ForexSelling,BanknoteBuying,BanknoteSelling) values ('" + "a" + "', +'" + "b" + "',+'" + 0 + "',+'" + 0 + "',+'" + 0 + "',+'" + 0 + "')";
+                    string tbl2 = "insert into EuroRates(Name,CurrencyName,ForexBuying,ForexSelling,BanknoteBuying,BanknoteSelling) values ('" + "a" + "', +'" + "b" + "',+'" + 0 + "',+'" + 0 + "',+'" + 0 + "',+'" + 0 + "')";
+                    SQLiteCommand komut3 = new SQLiteCommand(tbl, baglan);
+                    SQLiteCommand komut4 = new SQLiteCommand(tbl2, baglan);
+                    komut3.ExecuteNonQuery();
+                    komut4.ExecuteNonQuery();
+                    baglan.Close();
+                    Console.Write("Eklendi");
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            //System.Diagnostics.Debugger.Launch();
+            try
+            {
+
+
                 XmlReaderSettings settings = new XmlReaderSettings();
                 settings.Async = true;
 
@@ -96,8 +133,9 @@ namespace ExchangeRatesService
 
                                         try
                                         {
+
                                             baglan.Open();
-                                            //string sql = "insert into DolarRates(Name,CurrencyName,ForexBuying,ForexSelling,BanknoteBuying,BanknoteSelling) values ('" + liste[1] + "', +'" + liste[2] + "',+'" + Convert.ToDouble(liste[3])+ "',+'" + liste[4] + "',+'" + liste[5] + "',+'" + liste[6] + "')";
+                                            //string sql = "insert into EuroRates(Name,CurrencyName,ForexBuying,ForexSelling,BanknoteBuying,BanknoteSelling) values ('" + liste[1] + "', +'" + liste[2] + "',+'" + Convert.ToDouble(liste[3])+ "',+'" + liste[4] + "',+'" + liste[5] + "',+'" + liste[6] + "')";
                                             string sql = "Update DolarRates set Name=@p1,CurrencyName=@p2,ForexBuying=@p3,ForexSelling=@p4,BanknoteBuying=@p5,BanknoteSelling=@p6";
                                             SQLiteCommand komut = new SQLiteCommand(sql, baglan);
                                             komut.Parameters.AddWithValue("@p1", liste[1]);
@@ -128,7 +166,7 @@ namespace ExchangeRatesService
                                         try
                                         {
                                             baglan.Open();
-                                            //string sql = "insert into DolarRates(Name,CurrencyName,ForexBuying,ForexSelling,BanknoteBuying,BanknoteSelling) values ('" + liste[1] + "', +'" + liste[2] + "',+'" + Convert.ToDouble(liste[3])+ "',+'" + liste[4] + "',+'" + liste[5] + "',+'" + liste[6] + "')";
+                                            // string sql = "insert into DolarRates(Name,CurrencyName,ForexBuying,ForexSelling,BanknoteBuying,BanknoteSelling) values ('" + liste[1] + "', +'" + liste[2] + "',+'" + Convert.ToDouble(liste[3])+ "',+'" + liste[4] + "',+'" + liste[5] + "',+'" + liste[6] + "')";
                                             string sql = "Update EuroRates set Name=@p1,CurrencyName=@p2,ForexBuying=@p3,ForexSelling=@p4,BanknoteBuying=@p5,BanknoteSelling=@p6";
                                             SQLiteCommand komut = new SQLiteCommand(sql, baglan);
                                             komut.Parameters.AddWithValue("@p1", liste[1]);
@@ -167,9 +205,13 @@ namespace ExchangeRatesService
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Console.WriteLine(e.Message);
                 throw;
             }
+
+
+
+
         }
 
     }
